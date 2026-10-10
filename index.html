@@ -1,21 +1,337 @@
-here
-document.getElementById('profileForm').addEventListener('submit', function(event) {
-  event.preventDefault();
 
-  const name = document.getElementById('displayName').value.trim();
-  const age = Number(document.getElementById('age').value);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#071b3a">
+<title>Somali Future — Find Your Connection</title>
+<style>
+:root {
+  --navy:#071b3a;
+  --blue:#1677e8;
+  --sky:#35b9ff;
+  --pink:#ff4f91;
+  --purple:#9561ff;
+  --gold:#ffc857;
+  --ink:#142b49;
+  --muted:#718096;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Arial,sans-serif;color:white;
+  background:linear-gradient(155deg,#06142e,#0b3470 58%,#071b3a);
+  min-height:100vh;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+header{padding:20px 17px 24px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.logo{font-size:23px;font-weight:800}
+.logo span{color:var(--sky)}
+.tag{font-size:11px;color:#c5ddff;margin-top:6px}
+.round{border:1px solid #ffffff40;background:#ffffff18;color:white;border-radius:50%;width:42px;height:42px;font-size:22px}
+.hero{
+  margin-top:21px;padding:22px 19px;border-radius:23px;
+  background:linear-gradient(115deg,#1268d9,#6138d9 70%,#a044d8);
+  box-shadow:0 10px 30px #0003;
+}
+.hero h1{font-size:26px;line-height:1.2;margin:0 0 9px}
+.hero p{font-size:13px;line-height:1.6;color:#edf5ff;margin:0}
+main{max-width:660px;margin:auto;padding:0 15px 100px}
+.page{display:none}
+.page.active{display:block}
+.heading{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:21px 2px 13px}
+h2{font-size:19px;margin:0}
+.muted{font-size:11px;color:#bfd6f8}
+.filters{display:flex;gap:8px;overflow:auto;padding:2px 0 15px}
+.filter{white-space:nowrap;border:1px solid #ffffff40;background:#ffffff12;color:white;border-radius:22px;padding:9px 13px;font-size:12px}
+.filter.active{background:var(--sky);color:#07234a;border-color:var(--sky);font-weight:bold}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.card{background:white;color:var(--ink);border-radius:18px;overflow:hidden;box-shadow:0 7px 22px #0003}
+.photo{height:150px;display:flex;align-items:center;justify-content:center;position:relative;font-size:60px;background:linear-gradient(145deg,#c3e4ff,#dcd4ff)}
+.photo.pinkbg{background:linear-gradient(145deg,#ffdaeb,#d8eaff)}
+.photo.goldbg{background:linear-gradient(145deg,#ffe7b1,#d7eaff)}
+.photo.greenbg{background:linear-gradient(145deg,#c8f5e3,#d8eaff)}
+.sample{position:absolute;top:8px;left:8px;background:#ffffffed;color:#0755a5;border-radius:15px;padding:5px 7px;font-size:9px;font-weight:bold}
+.info{padding:11px}
+.name{font-size:15px;font-weight:bold;margin-bottom:5px}
+.city{font-size:11px;color:var(--muted);line-height:1.5;min-height:31px}
+.actions{display:flex;gap:7px;margin-top:10px}
+.actions button{height:36px;border-radius:11px}
+.pass{width:36px;background:#edf4ff;border:0;color:#1768ce;font-size:19px}
+.like{flex:1;background:var(--pink);color:white;border:0;font-size:12px;font-weight:bold}
+.banner{margin-top:20px;padding:17px;border:1px solid #ffffff28;border-radius:17px;background:linear-gradient(110deg,#123b79,#442a86)}
+.banner p{font-size:12px;line-height:1.5;color:#d4e5ff;margin-bottom:0}
+.notice{font-size:10px;line-height:1.6;color:#c2d8f8;margin:18px 2px}
+.panel{background:white;color:var(--ink);border-radius:19px;padding:18px}
+.panel p{font-size:13px;line-height:1.6;color:#65758e}
+.primary{background:linear-gradient(90deg,var(--blue),var(--purple));color:white;border:0;padding:13px 16px;border-radius:12px;font-weight:bold}
+.field{display:flex;flex-direction:column;gap:7px;margin:14px 0}
+.field label{font-size:12px;font-weight:bold;color:#294363}
+.field input,.field select,.field textarea{
+  width:100%;padding:12px;border:1px solid #d8e3f1;
+  border-radius:11px;background:#f9fbff;color:#142b49;
+}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid #b8d9ff}
+.choice{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:#294363;margin:10px 0}
+.choice input{accent-color:#1677e8;margin-top:2px}
+.formtitle{color:#0755a5;font-size:16px;font-weight:bold;margin-top:22px}
+.avatar{width:44px;height:44px;border-radius:50%;background:#d9eaff;display:grid;place-items:center;font-size:23px;flex-shrink:0}
+.chatrow{display:flex;gap:11px;align-items:center;padding:13px 0;border-bottom:1px solid #e5edf7}
+.chatrow strong{font-size:13px}
+.chatrow p{font-size:12px;margin:5px 0 0}
+.message{max-width:85%;padding:12px;border-radius:15px;margin:12px 0;font-size:13px;line-height:1.5}
+.received{background:#eaf2ff;color:#17345b;border-bottom-left-radius:4px}
+.sent{background:linear-gradient(120deg,#1687f5,#7149ed);color:white;margin-left:auto;border-bottom-right-radius:4px}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:5;display:flex;justify-content:space-around;background:#081b3af5;border-top:1px solid #ffffff24;padding:10px 3px calc(10px + env(safe-area-inset-bottom))}
+nav button{flex:1;min-width:0;border:0;background:transparent;color:#b9cce9;font-size:10px;padding:4px 0}
+nav button span{display:block;font-size:21px;margin-bottom:4px}
+nav button.active{color:#55c6ff;font-weight:bold}
+nav button.active span{color:#ff75a9}
+.toast{display:none;position:fixed;z-index:9;bottom:82px;left:16px;right:16px;padding:13px;background:white;color:#102a50;border-radius:13px;box-shadow:0 5px 20px #0004;font-size:13px}
+@media(min-width:500px){.photo{height:185px}main{padding-left:22px;padding-right:22px}}
+</style>
+</head>
+<body>
 
-  if (age < 21 || age > 45) {
-    notify('Please choose an age between 21 and 45.');
+<header>
+  <div class="top">
+    <div>
+      <div class="logo">🇸🇴 Somali <span>Future</span> 💗</div>
+      <div class="tag">Connecting Somali Hearts, Building Tomorrow.</div>
+    </div>
+    <button class="round" onclick="notify('Welcome to Somali Future! 💙')" aria-label="Welcome">♡</button>
+  </div>
+  <div class="hero">
+    <h1>Your future connection starts here ✨</h1>
+    <p>Meet Somali singles around the world. Discover people, build friendships, and explore meaningful connections.</p>
+  </div>
+</header>
+
+<main>
+
+<section id="home" class="page active">
+  <div class="heading"><h2>Discover people</h2><span class="muted">Sample profiles</span></div>
+  <div class="filters">
+    <button class="filter active" onclick="filterCity('all',this)">✨ Everyone</button>
+    <button class="filter" onclick="filterCity('Somalia',this)">Somalia</button>
+    <button class="filter" onclick="filterCity('USA',this)">USA</button>
+    <button class="filter" onclick="filterCity('UK',this)">UK</button>
+    <button class="filter" onclick="filterCity('Europe',this)">Europe</button>
+    <button class="filter" onclick="filterCity('Canada',this)">Canada</button>
+  </div>
+
+  <div class="grid">
+    <article class="card" data-country="Somalia">
+      <div class="photo"><span class="sample">SAMPLE</span>👩🏽‍🦰</div>
+      <div class="info"><div class="name">Ayaan, 24</div><div class="city">📍 Mogadishu, Somalia<br>Family, books and travel.</div><div class="actions"><button class="pass" onclick="notify('Skipped sample profile.')">×</button><button class="like" onclick="like('Ayaan')">♥ Like</button></div></div>
+    </article>
+    <article class="card" data-country="USA">
+      <div class="photo pinkbg"><span class="sample">SAMPLE</span>👩🏽‍🦱</div>
+      <div class="info"><div class="name">Hodan, 32</div><div class="city">📍 Minneapolis, USA<br>Culture, food and nature.</div><div class="actions"><button class="pass" onclick="notify('Skipped sample profile.')">×</button><button class="like" onclick="like('Hodan')">♥ Like</button></div></div>
+    </article>
+    <article class="card" data-country="UK">
+      <div class="photo goldbg"><span class="sample">SAMPLE</span>👨🏽</div>
+      <div class="info"><div class="name">Abdi, 28</div><div class="city">📍 London, UK<br>Fitness, music and family.</div><div class="actions"><button class="pass" onclick="notify('Skipped sample profile.')">×</button><button class="like" onclick="like('Abdi')">♥ Like</button></div></div>
+    </article>
+    <article class="card" data-country="Europe">
+      <div class="photo greenbg"><span class="sample">SAMPLE</span>🧕🏾</div>
+      <div class="info"><div class="name">Maryan, 38</div><div class="city">📍 Stockholm, Sweden<br>Learning, travel and kindness.</div><div class="actions"><button class="pass" onclick="notify('Skipped sample profile.')">×</button><button class="like" onclick="like('Maryan')">♥ Like</button></div></div>
+    </article>
+    <article class="card" data-country="Canada">
+      <div class="photo pinkbg"><span class="sample">SAMPLE</span>👨🏾</div>
+      <div class="info"><div class="name">Hassan, 45</div><div class="city">📍 Toronto, Canada<br>Business, family and travel.</div><div class="actions"><button class="pass" onclick="notify('Skipped sample profile.')">×</button><button class="like" onclick="like('Hassan')">♥ Like</button></div></div>
+    </article>
+    <article class="card" data-country="Somalia">
+      <div class="photo"><span class="sample">SAMPLE</span>🧕🏽</div>
+      <div class="info"><div class="name">Safiya, 21</div><div class="city">📍 Garowe, Somalia<br>Art, nature and new ideas.</div><div class="actions"><button class="pass" onclick="notify('Skipped sample profile.')">×</button><button class="like" onclick="like('Safiya')">♥ Like</button></div></div>
+    </article>
+  </div>
+
+  <div class="banner"><strong>💙 Somali community, worldwide</strong><p>Connect with Somali people in your country or across the world. Be respectful and protect your privacy.</p></div>
+  <p class="notice">These are fictional demo profiles, not real members. Like actions are only temporary demonstrations. Real registration, matching, and messaging are not connected yet.</p>
+</section>
+
+<section id="register" class="page">
+  <div class="heading"><h2>✨ Create your profile</h2></div>
+  <div class="panel">
+    <p>Enter your details and press Save My Profile to save your profile on this device.</p>
+
+    <form id="profileForm">
+      <div class="formtitle">Basic information</div>
+      <div class="field"><label for="displayName">Name or display name</label><input id="displayName" required maxlength="60" placeholder="Your name"></div>
+      <div class="field"><label for="age">Age (21–45)</label><select id="age" required></select></div>
+      <div class="field"><label for="gender">I am</label><select id="gender"><option>Man</option><option>Woman</option><option>Prefer not to say</option></select></div>
+      <div class="field"><label for="country">Country</label><select id="country"><option>Somalia</option><option>United States</option><option>United Kingdom</option><option>Canada</option><option>Sweden</option><option>Norway</option><option>Germany</option><option>Netherlands</option><option>Finland</option><option>Denmark</option><option>Other country</option></select></div>
+      <div class="field"><label for="city">City</label><input id="city" maxlength="80" placeholder="Your city"></div>
+      <div class="field"><label for="photo">Profile photo (later feature)</label><input id="photo" disabled placeholder="Photo upload will be added later"></div>
+
+      <div class="formtitle">Marriage and family</div>
+      <div class="field"><label for="marital">Marital status</label><select id="marital"><option>Never married</option><option>Currently married</option><option>Divorced</option><option>Widowed</option><option>Prefer not to say</option></select></div>
+      <div class="field"><label for="marriages">Number of times married</label><select id="marriages"><option value="0">None — never married</option><option value="1">Once</option><option value="2">Twice</option><option value="3">Three times</option><option value="4">Four or more times</option><option value="skip">Prefer not to say</option></select></div>
+      <div class="field"><label for="children">Do you have children?</label><select id="children"><option value="no">No children</option><option value="yes">Yes, I have children</option><option value="skip">Prefer not to say</option></select></div>
+      <div class="field" id="childCountField" hidden><label for="childCount">How many children?</label><select id="childCount"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8 or more</option></select></div>
+
+      <div class="formtitle">Appearance</div>
+      <div class="field"><label for="height">Height</label><select id="height"><option value="">Prefer not to say</option><option>4 ft 10 in (147 cm)</option><option>5 ft (152 cm)</option><option>5 ft 2 in (157 cm)</option><option>5 ft 4 in (163 cm)</option><option>5 ft 6 in (168 cm)</option><option>5 ft 8 in (173 cm)</option><option>5 ft 10 in (178 cm)</option><option>6 ft (183 cm)</option><option>6 ft 2 in (188 cm)</option><option>6 ft 4 in (193 cm)</option><option>6 ft 6 in (198 cm)</option><option>6 ft 8 in (203 cm)</option></select></div>
+      <div class="field"><label for="skin">Skin tone (optional)</label><select id="skin"><option>Prefer not to say</option><option>Light brown</option><option>Medium brown</option><option>Dark brown</option><option>Deep brown</option><option>Another description</option></select></div>
+      <div class="field"><label for="bio">About me (optional)</label><textarea id="bio" rows="3" maxlength="300" placeholder="Your interests, hobbies and what matters to you"></textarea></div>
+
+      <label class="choice"><input type="checkbox" id="adult" required> I confirm that I am at least 21 years old.</label>
+
+      <button class="primary" type="submit" style="width:100%">Save My Profile</button>
+    </form>
+
+    <p id="formResult" role="status" aria-live="polite"></p>
+    <p><small>Your profile is saved only in this browser on this device. It is not uploaded to a server or shown to other users. Avoid entering sensitive personal information on a shared device.</small></p>
+  </div>
+</section>
+
+<section id="likes" class="page">
+  <div class="heading"><h2>💗 Your Likes</h2></div>
+  <div class="panel"><h2>People you like</h2><p id="likedNames">Your demo likes will appear here.</p></div>
+</section>
+
+<section id="chats" class="page">
+  <div class="heading"><h2>💬 Messages</h2></div>
+  <div class="panel">
+    <h2>Chat preview</h2>
+    <p>This sample screen shows the style of a future conversation. It does not send real messages.</p>
+    <div class="chatrow"><div class="avatar">🧕🏽</div><div><strong>Sample member</strong><p>Example conversation · Demo only</p></div></div>
+    <div class="message received">Hello! 😊 Welcome to Somali Future.</div>
+    <div class="message sent">Hello! Nice to meet you. 💙</div>
+    <button class="primary" onclick="notify('Secure private chat will be added in a future version.')">Private chat coming soon</button>
+  </div>
+</section>
+
+<section id="profile" class="page">
+  <div class="heading"><h2>☺ Your profile</h2></div>
+  <div class="panel">
+    <div style="text-align:center;font-size:52px">👤</div>
+    <h2 style="text-align:center">Your future starts here</h2>
+    <p id="savedProfileSummary" style="text-align:center">Save your details to this device to keep your profile information.</p>
+    <button class="primary" style="width:100%" onclick="editProfile()">Create or edit my profile</button>
+  </div>
+</section>
+
+</main>
+
+<nav>
+  <button class="active" onclick="go('home',this)"><span>⌂</span>Home</button>
+  <button onclick="go('home',this)"><span>⌕</span>Discover</button>
+  <button onclick="go('likes',this)"><span>♥</span>Likes</button>
+  <button onclick="go('chats',this)"><span>▤</span>Chats</button>
+  <button onclick="go('profile',this)"><span>☺</span>Profile</button>
+  <button onclick="go('register',this)"><span>＋</span>Join</button>
+</nav>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+
+let liked = [];
+
+const ageSelect = document.getElementById('age');
+
+for (let n = 21; n <= 45; n++) {
+  const option = document.createElement('option');
+  option.value = n;
+  option.textContent = n;
+  if (n === 25) option.selected = true;
+  ageSelect.appendChild(option);
+}
+
+function notify(message) {
+  const el = document.getElementById('toast');
+  el.textContent = message;
+  el.style.display = 'block';
+
+  if (window.toastTimer) clearTimeout(window.toastTimer);
+
+  window.toastTimer = setTimeout(function() {
+    el.style.display = 'none';
+  }, 3000);
+}
+
+function go(id, button) {
+  const page = document.getElementById(id);
+  if (!page) return;
+
+  document.querySelectorAll('.page').forEach(function(p) {
+    p.classList.remove('active');
+  });
+
+  page.classList.add('active');
+
+  document.querySelectorAll('nav button').forEach(function(b) {
+    b.classList.remove('active');
+  });
+
+  if (button) {
+    button.classList.add('active');
+  } else {
+    const navButtons = document.querySelectorAll('nav button');
+    const pageIndexes = {
+      home: 0,
+      likes: 2,
+      chats: 3,
+      profile: 4,
+      register: 5
+    };
+    if (pageIndexes[id] !== undefined) {
+      navButtons[pageIndexes[id]].classList.add('active');
+    }
+  }
+
+  window.scrollTo(0, 0);
+}
+
+function like(name) {
+  if (liked.includes(name)) {
+    notify('You already liked this sample profile.');
     return;
   }
 
-  const profile = {
-    name: name,
-    age: age,
+  liked.push(name);
+
+  document.getElementById('likedNames').textContent =
+    liked.join(', ') + ' — demo only; no one was notified.';
+
+  notify('You liked ' + name + '! 💗 Demo only.');
+}
+
+function filterCity(country, button) {
+  document.querySelectorAll('.filter').forEach(function(b) {
+    b.classList.remove('active');
+  });
+
+  button.classList.add('active');
+
+  document.querySelectorAll('.card').forEach(function(card) {
+    card.style.display =
+      country === 'all' || card.dataset.country === country ? '' : 'none';
+  });
+}
+
+document.getElementById('children').addEventListener('change', function() {
+  document.getElementById('childCountField').hidden = this.value !== 'yes';
+});
+
+document.getElementById('marital').addEventListener('change', function() {
+  if (this.value === 'Never married') {
+    document.getElementById('marriages').value = '0';
+  }
+});
+
+function getProfileFromForm() {
+  return {
+    name: document.getElementById('displayName').value.trim(),
+    age: Number(document.getElementById('age').value),
     gender: document.getElementById('gender').value,
     country: document.getElementById('country').value,
-    city: document.getElementById('city').value,
+    city: document.getElementById('city').value.trim(),
     marital: document.getElementById('marital').value,
     marriages: document.getElementById('marriages').value,
     children: document.getElementById('children').value,
@@ -24,17 +340,108 @@ document.getElementById('profileForm').addEventListener('submit', function(event
       : '',
     height: document.getElementById('height').value,
     skin: document.getElementById('skin').value,
-    bio: document.getElementById('bio').value
+    bio: document.getElementById('bio').value.trim(),
+    adult: document.getElementById('adult').checked
   };
+}
+
+function showSavedProfile(profile) {
+  const summary = document.getElementById('savedProfileSummary');
+
+  if (!profile || !profile.name) {
+    summary.textContent = 'No saved profile on this device yet. Create your profile to get started.';
+    return;
+  }
+
+  summary.textContent =
+    profile.name + ', age ' + profile.age + ' · ' +
+    profile.city + (profile.city ? ', ' : '') + profile.country +
+    '. Your profile information is saved on this device.';
+}
+
+function loadSavedProfile() {
+  try {
+    const saved = localStorage.getItem('somaliFutureProfile');
+    if (!saved) return;
+
+    const profile = JSON.parse(saved);
+
+    const fields = {
+      displayName: profile.name,
+      age: String(profile.age),
+      gender: profile.gender,
+      country: profile.country,
+      city: profile.city,
+      marital: profile.marital,
+      marriages: profile.marriages,
+      children: profile.children,
+      childCount: profile.childCount,
+      height: profile.height,
+      skin: profile.skin,
+      bio: profile.bio
+    };
+
+    Object.keys(fields).forEach(function(id) {
+      const element = document.getElementById(id);
+      const value = fields[id];
+
+      if (element && value !== undefined && value !== null) {
+        if (id === 'childCount' && value === '') return;
+        element.value = value;
+      }
+    });
+
+    document.getElementById('adult').checked = profile.adult === true;
+    document.getElementById('childCountField').hidden =
+      document.getElementById('children').value !== 'yes';
+
+    showSavedProfile(profile);
+  } catch (error) {
+    notify('A saved profile could not be loaded.');
+  }
+}
+
+document.getElementById('profileForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  const profile = getProfileFromForm();
+
+  if (!profile.name) {
+    notify('Please enter your name.');
+    document.getElementById('displayName').focus();
+    return;
+  }
+
+  if (profile.age < 21 || profile.age > 45) {
+    notify('Please choose an age between 21 and 45.');
+    return;
+  }
+
+  if (!profile.adult) {
+    notify('Please confirm that you are at least 21 years old.');
+    return;
+  }
 
   try {
     localStorage.setItem('somaliFutureProfile', JSON.stringify(profile));
 
     document.getElementById('formResult').textContent =
-      'Your profile has been saved on this device, ' + name + '!';
+      'Your profile has been saved on this device, ' + profile.name + '!';
 
+    showSavedProfile(profile);
     notify('Your profile was saved successfully! 💙');
   } catch (error) {
-    notify('Could not save your profile. Please try again.');
+    notify('Could not save your profile. Your browser may block local storage.');
   }
 });
+
+function editProfile() {
+  loadSavedProfile();
+  go('register');
+}
+
+loadSavedProfile();
+</script>
+
+</body>
+</html>
